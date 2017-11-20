@@ -1,0 +1,2 @@
+Matrix multiplication: block algorithm.
+Problem: find block size that minimizes time.
