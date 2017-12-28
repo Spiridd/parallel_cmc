@@ -38,12 +38,22 @@ def plot_data(data):
     plt.show()
 
 
+def combine_data_from_files(filenames, files_dir, output_name):
+    with open(os.path.join(files_dir, output_name), 'w') as output_file:
+        for filename in filenames:
+            with open(os.path.join(files_dir, filename)) as in_file:
+                for line in in_file:
+                    output_file.write(line)
+
+
 def main():
     # files_dir = 'regatta'
     files_dir = 'out'
-    files = get_files_starting_with('data', files_dir)
-    data = read_data_from_files(files, files_dir)
+    data_files = get_files_starting_with('data', files_dir)
+    data = read_data_from_files(data_files, files_dir)
     plot_data(data)
+    res_files = get_files_starting_with('res', files_dir)
+    combine_data_from_files(res_files, files_dir, 'all_primes.txt')
 
 
 if __name__ == '__main__':
