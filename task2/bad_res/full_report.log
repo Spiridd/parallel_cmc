@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.27)  28 DEC 2017 12:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.27)  28 DEC 2017 04:28
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -800,8 +800,7 @@ Package tocbibind Info: The document has section divisions on input line 50.
 
 Package tocbibind Note: Using section or other style headings.
 
-)
-No file full_report.aux.
+) (./full_report.aux)
 \openout1 = `full_report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 30.
@@ -820,6 +819,7 @@ LaTeX Font Info:    Checking defaults for T2A/cmr/m/n on input line 30.
 LaTeX Font Info:    ... okay on input line 30.
 LaTeX Font Info:    Try loading font information for T2A+ftm on input line 30.
 LaTeX Font Info:    No file T2Aftm.fd. on input line 30.
+
 
 LaTeX Font Warning: Font shape `T2A/ftm/m/n' undefined
 (Font)              using `T2A/cmr/m/n' instead on input line 30.
@@ -1052,13 +1052,13 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 6669 strings out of 493029
- 87412 string characters out of 6136234
+ 6671 strings out of 493029
+ 87444 string characters out of 6136234
  182397 words of memory out of 5000000
  10042 multiletter control sequences out of 15000+600000
  22060 words of font info for 39 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,6n,51p,872b,1597s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,6n,51p,847b,1597s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t2a.enc}{/usr/share/texmf
 /fonts/enc/dvips/lm/lm-mathex.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.en
 c}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/en
@@ -1071,7 +1071,7 @@ mf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy
 exmf/fonts/type1/public/cm-super/sfrm1440.pfb></usr/share/texmf/fonts/type1/pub
 lic/cm-super/sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm207
 4.pfb>
-Output written on full_report.pdf (9 pages, 357194 bytes).
+Output written on full_report.pdf (9 pages, 357996 bytes).
 PDF statistics:
  98 PDF objects out of 1000 (max. 8388607)
  61 compressed objects within 1 object stream

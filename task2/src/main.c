@@ -35,8 +35,8 @@ void test(unsigned int* Events, int NUM_EVENTS, FILE* file)
     for(int n=nmin; n<=nmax; n+=step)
     {
         printf("size = %d\n", n);
-        // two runs: 32x32 and 36x36
-        for(int bsz=32; bsz<=36; bsz+=4)
+        // two runs: 32x32 and 52x52
+        for(int bsz=32; bsz<=52; bsz+=20)
         {
             // ijk ijk
             set_zeros(C, n*n);

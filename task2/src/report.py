@@ -81,7 +81,7 @@ def plot_data(csv_filename):
 
     ijk_32 = {}
     ikj_32 = {}
-    ijk_36 = {}
+    ijk_52 = {}
     for line in csv_reader:
         if line[2] == '32':
             if line[0] == 'ijk':
@@ -90,7 +90,7 @@ def plot_data(csv_filename):
                 add_line(line, fieldnames, ikj_32)
         else:
             if line[0] == 'ijk':
-                add_line(line, fieldnames, ijk_36)
+                add_line(line, fieldnames, ijk_52)
 
     for field in fieldnames:
         if field in ('indices', 'bsz', 'size'):
@@ -100,7 +100,7 @@ def plot_data(csv_filename):
         plt.title(get_title(field))
         plt.ylabel(get_label(field))
         plt.plot(ijk_32['size'], ijk_32[field], 'b', label='ijk 32')
-        plt.plot(ijk_36['size'], ijk_36[field], 'r', label='ijk 36')
+        plt.plot(ijk_52['size'], ijk_52[field], 'r', label='ijk 52')
         plt.plot(ikj_32['size'], ikj_32[field], 'k', label='ikj 32')
         plt.legend()
         plt.grid()
