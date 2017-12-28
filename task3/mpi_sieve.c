@@ -252,6 +252,24 @@ int* get_primes_in_between(int a, int b, int* primes_size,
     return primes;
 }
 
+// generate filename for output
+char* get_res_filename(int rank)
+{
+    char* str = malloc(20);
+    strcpy(str, "out/res_");
+    sprintf(str+8, "%d.txt", rank);
+    return str;
+}
+
+// generate filename for data
+char* get_data_filename(int n_proc)
+{
+    char* str = malloc(20);
+    strcpy(str, "out/data_");
+    sprintf(str+9, "%d.txt", n_proc);
+    return str;
+}
+
 // prints primes to stdout
 void parallel_sieve(int N)
 {
@@ -260,11 +278,27 @@ void parallel_sieve(int N)
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     int n_proc;
     MPI_Comm_size(MPI_COMM_WORLD, &n_proc);
+    
+    // create data file
+    //if (rank == 0)
+        //fclose(fopen(get_data_filename(n_proc), "w"));
+
+    // start counting time here
+    const clock_t begin = clock();
 
     // get problem size and divide it
     const int sqrt_N1 = (int) sqrt(N-1);
     const int s = N-sqrt_N1-1; // size of (sqrt_N1; N)
     const int ds = s/n_proc; // piece of work for 1 processor
+    // get filename for output
+    char* res_filename = get_res_filename(rank);
+    FILE* res_file = fopen(res_filename, "w");
+    free(res_filename);
+    //get filename for data (to keep time and rank)
+    char* data_filename = get_data_filename(n_proc);
+    FILE* data_file = fopen(data_filename, "a");
+    free(data_filename);
+
     // calculate interval (a; b)
     if (rank > 0)
     {
@@ -275,10 +309,14 @@ void parallel_sieve(int N)
         int primes_size;
         int* primes = get_primes_in_between(a, b, &primes_size, &aux_primes, &aux_primes_size);
         free(aux_primes);
+
+        // stop counting time here
+        const clock_t end = clock();
+        const double time = (double)(end-begin)/CLOCKS_PER_SEC;
+        fprintf(data_file, "%d,%d,%f\n", rank, N, time);
+
         for(int i=0; i<primes_size; ++i)
-            printf("%d ", primes[i]);
-        // send to 0
-        // ...
+            fprintf(res_file, "%d ", primes[i]);
         free(primes);
     }
     else
@@ -290,22 +328,22 @@ void parallel_sieve(int N)
         int aux_primes_size;
         int primes_size;
         int* primes = get_primes_in_between(a, b, &primes_size, &aux_primes, &aux_primes_size);
+
+        // stop counting time here
+        const clock_t end = clock();
+        const double time = (double)(end-begin)/CLOCKS_PER_SEC;
+        fprintf(data_file, "%d,%d,%f\n", rank, N, time);
+
         for(int i=0; i<aux_primes_size; ++i)
-            printf("%d ", aux_primes[i]);
+            fprintf(res_file, "%d ", aux_primes[i]);
         free(aux_primes);
-        /*
-        // receive the next piece
-        // using aux prefix
-        for(int i=1; i<n_proc; ++i)
-        {
-            
-        }
-        */
-        // print the last piece (own)
+
+        // print answers 
         for(int i=0; i<primes_size; ++i)
-            printf("%d ", primes[i]);
+            fprintf(res_file, "%d ", primes[i]);
         free(primes);
     }
+    fclose(res_file);
 }
 
 int main(int argc, char** argv)
@@ -318,6 +356,7 @@ int main(int argc, char** argv)
     }
     const int N = (int) strtol(argv[1], NULL, 10);
     parallel_sieve(N); 
+    
     MPI_Finalize();
     return 0;
 }
