@@ -1,2 +1,0 @@
-Matrix multiplication: straight algorithm.
-Problem: Find the order of indexes that minimizes time.

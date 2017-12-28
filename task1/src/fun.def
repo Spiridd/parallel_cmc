@@ -1,0 +1,159 @@
+void write_time_to_binary(double times[], size_t count, const char* filename)
+{
+    FILE* file = fopen(filename, "wb");
+    fwrite(times, sizeof(double), count, file);
+    fclose(file);
+}
+
+void write_matrix_to_binary(value_t *A, int n, int m, const char* filename)
+{
+    FILE *file = fopen(filename, "wb");
+    // 0 - float, 1 - double
+    const static int f = 0;
+    const static int d = 1;
+    if (sizeof(value_t) == 4)   fwrite(&f, sizeof(int), 1, file);
+    else                        fwrite(&d, sizeof(int), 1, file);
+    fwrite(&n, sizeof(int), 1, file);
+    fwrite(&m, sizeof(int), 1, file);
+    fwrite(A, sizeof(value_t), n*m, file);
+    fclose(file);
+}
+
+void get_random_array(value_t *A, int n)
+{
+    for(int i=0; i<n; ++i)
+        A[i] = (value_t)rand()/RAND_MAX;
+}
+
+void set_zeros(value_t *A, int n)
+{
+    for(int i=0; i<n; ++i)
+        A[i] = 0.0;
+}
+
+void dgemm_ijk(value_t *A, value_t *B, value_t *C, int n, int m, int h)
+{
+    for(int i=0; i<n; ++i)
+    {
+        const int i_m = i*m;
+        for(int j=0; j<h; ++j)
+        {
+            value_t cij = 0.0;
+            for(int k=0; k<m; ++k)
+                cij += A[i_m+k] * B[k*h+j];
+            C[i*h+j] = cij;
+        }
+    }
+}
+
+void dgemm_jik(value_t *A, value_t *B, value_t *C, int n, int m, int h)
+{
+    for(int j=0; j<h; ++j)
+    {
+        for(int i=0; i<n; ++i)
+        {
+            const int i_m = i*m;
+            value_t cij = 0.0;
+            for(int k=0; k<m; ++k)
+                cij += A[i_m+k] * B[k*h+j];
+            C[i*h+j] = cij;
+        }
+    }
+}
+
+void dgemm_ikj(value_t *A, value_t *B, value_t *C, int n, int m, int h)
+{
+    for(int i=0; i<n; ++i)
+    {
+        const int i_m = i*m;
+        const int i_h = i*h;
+        for(int k=0; k<m; ++k)
+        {
+            const int k_h = k*h;
+            const value_t a = A[i_m+k];
+            for(int j=0; j<h; ++j)
+                C[i_h+j] += a * B[k_h+j];
+        }
+    }
+}
+
+void dgemm_kij(value_t *A, value_t *B, value_t *C, int n, int m, int h)
+{
+    for(int k=0; k<m; ++k)
+    {
+        const int k_h = k*h;
+        for(int i=0; i<n; ++i)
+        {
+            const int i_m = i*m;
+            const int i_h = i*h;
+            const value_t a = A[i_m+k];
+            for(int j=0; j<h; ++j)
+            {
+                C[i_h+j] += a * B[k_h+j];
+            }
+        }
+    }
+}
+
+void dgemm_kji(value_t *A, value_t *B, value_t *C, int n, int m, int h)
+{
+    for(int k=0; k<m; ++k)
+    {
+        const int k_h = k*h;
+        for(int j=0; j<h; ++j)
+        {
+            const value_t b = B[k_h+j];
+            for(int i=0; i<n; ++i)
+                C[i*h+j] += A[i*m+k] * b; 
+        }
+    }
+}
+
+void dgemm_jki(value_t *A, value_t *B, value_t *C, int n, int m, int h)
+{
+    for(int j=0; j<h; ++j)
+    {
+        for(int k=0; k<m; ++k)
+        {
+            const int k_h = k*h;
+            const value_t b = B[k_h+j];
+            for(int i=0; i<n; ++i)
+                C[i*h+j] += A[i*m+k] * b;
+        }
+    }
+}
+
+void (*fp[6])(value_t*, value_t*, value_t*, int, int, int);
+fp[0] = &dgemm_ijk;
+fp[1] = &dgemm_jik;
+fp[2] = &dgemm_ikj;
+fp[3] = &dgemm_kij;
+fp[4] = &dgemm_kji;
+fp[5] = &dgemm_jki;
+
+double measure_time(void (*multiplier)(value_t*, value_t*, value_t*, int, int, int), int n, int m, int h, int n_iter)
+{
+    value_t* A = (value_t*) malloc(n*m * sizeof(value_t));
+    value_t* B = (value_t*) malloc(m*h * sizeof(value_t));
+    value_t* C = (value_t*) malloc(n*h * sizeof(value_t));
+
+    clock_t overall_time = 0;
+    for(int i=0; i<n_iter; ++i)
+    {
+        get_random_array(A, n*m);
+        get_random_array(B, m*h);
+        set_zeros(C, n*h);
+        
+        clock_t begin = clock();
+        multiplier(A, B, C, n, m, h);
+        clock_t end = clock();
+        overall_time += end-begin;
+    }
+    
+    free(A);
+    free(B);
+    free(C);
+
+    return (double)overall_time/CLOCKS_PER_SEC/n_iter;
+}
+

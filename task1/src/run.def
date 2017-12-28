@@ -1,0 +1,8 @@
+static const int n_iter = 3;
+double times[6];
+
+for(int i=0; i<6; ++i)
+    times[i] = measure_time(fp[i], n, m, h, n_iter);
+    
+write_time_to_binary(times, sizeof(times)/sizeof(times[0]), filename_times);
+

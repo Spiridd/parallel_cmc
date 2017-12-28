@@ -1,0 +1,19 @@
+value_t* A = (value_t*) malloc(n*m * sizeof(value_t));
+value_t* B = (value_t*) malloc(m*h * sizeof(value_t));
+value_t* C = (value_t*) malloc(n*h * sizeof(value_t));
+
+srand(time(NULL));
+get_random_array(A, n*m);
+get_random_array(B, m*h);
+set_zeros(C, n*h);
+
+fp[mode](A, B, C, n, m, h);
+
+write_matrix_to_binary(A, n, m, filename_A);
+write_matrix_to_binary(B, m, h, filename_B);
+write_matrix_to_binary(C, n, h, filename_C);
+
+free(A);
+free(B);
+free(C);
+
