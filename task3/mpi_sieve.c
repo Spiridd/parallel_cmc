@@ -300,7 +300,6 @@ void parallel_sieve(int N)
     {
         const int a = sqrt_N1 + (rank-1)*ds;
         const int b = sqrt_N1 + rank*ds + 1;
-        printf("%d - [%d, %d]\n", rank, a+1, b-1);
         int* aux_primes;
         int aux_primes_size;
         int primes_size;
@@ -312,8 +311,8 @@ void parallel_sieve(int N)
         const double time = (double)(end-begin)/CLOCKS_PER_SEC;
         fprintf(data_file, "%d,%d,%f\n", rank, N, time);
 
-        // print to stdout total number of primes
-        printf("%d - %d\n", rank, primes_size);
+        // reduce total number of primes
+        MPI_Reduce(&primes_size, NULL, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
         for(int i=0; i<primes_size; ++i)
             fprintf(res_file, "%d ", primes[i]);
@@ -324,7 +323,6 @@ void parallel_sieve(int N)
         // rank 0 (master)
         const int a = sqrt_N1 + (n_proc-1)*ds;
         const int b = N;
-        printf("%d - [%d, %d]\n", rank, a+1, b-1);
         int* aux_primes;
         int aux_primes_size;
         int primes_size;
@@ -335,8 +333,11 @@ void parallel_sieve(int N)
         const double time = (double)(end-begin)/CLOCKS_PER_SEC;
         fprintf(data_file, "%d,%d,%f\n", rank, N, time);
 
-        // print to stdout total number of primes
-        printf("%d - %d\n", rank, aux_primes_size+primes_size);
+        // get total quantity of primes
+        int local = aux_primes_size+primes_size;
+        int total = 0;
+        MPI_Reduce(&local, &total, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+        printf("Total primes: %d\n", total);
 
         for(int i=0; i<aux_primes_size; ++i)
             fprintf(res_file, "%d ", aux_primes[i]);
