@@ -30,16 +30,16 @@ def plot_data(data):
     values_1 = [x[1] for x in simple_data]
     values_2 = [x[2] for x in simple_data]
     values_3 = [x[3] for x in simple_data]
-    plt.plot(keys, values_1, 'r', label='min')
-    plt.plot(keys, values_2, 'm', label='max')
-    plt.plot(keys, values_3, 'y', label='overall')
+    plt.plot(keys, values_1, 'r.', label='min')
+    plt.plot(keys, values_2, 'm.', label='max')
+    plt.plot(keys, values_3, 'y.', label='overall')
     plt.legend()
     plt.grid()
     plt.show()
 
 
 def main():
-    files_dir = 'out'
+    files_dir = 'regatta'
     files = get_files_starting_with('data', files_dir)
     data = read_data_from_files(files, files_dir)
     plot_data(data)
