@@ -24,22 +24,23 @@ def read_data_from_files(filenames, files_dir):
 def plot_data(data):
     simple_data = []
     for key, value in data.items():
-        simple_data.append((key, value[0], value[1], value[2]))
+        simple_data.append((int(key), value[0], value[1], value[2]))
     simple_data = sorted(simple_data, key=lambda x: x[0])
     keys = [x[0] for x in simple_data]
     values_1 = [x[1] for x in simple_data]
     values_2 = [x[2] for x in simple_data]
     values_3 = [x[3] for x in simple_data]
-    plt.plot(keys, values_1, 'r.', label='min')
-    plt.plot(keys, values_2, 'm.', label='max')
-    plt.plot(keys, values_3, 'y.', label='overall')
+    plt.plot(keys, values_1, 'r', label='min')
+    plt.plot(keys, values_2, 'm', label='max')
+    plt.plot(keys, values_3, 'y', label='overall')
     plt.legend()
     plt.grid()
     plt.show()
 
 
 def main():
-    files_dir = 'regatta'
+    # files_dir = 'regatta'
+    files_dir = 'out'
     files = get_files_starting_with('data', files_dir)
     data = read_data_from_files(files, files_dir)
     plot_data(data)

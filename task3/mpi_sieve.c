@@ -270,7 +270,7 @@ char* get_data_filename(int n_proc)
     return str;
 }
 
-// prints primes to stdout
+// prints primes to files
 void parallel_sieve(int N)
 {
     // get rank and size of processors
@@ -279,10 +279,6 @@ void parallel_sieve(int N)
     int n_proc;
     MPI_Comm_size(MPI_COMM_WORLD, &n_proc);
     
-    // create data file
-    //if (rank == 0)
-        //fclose(fopen(get_data_filename(n_proc), "w"));
-
     // start counting time here
     const clock_t begin = clock();
 
@@ -304,6 +300,7 @@ void parallel_sieve(int N)
     {
         const int a = sqrt_N1 + (rank-1)*ds;
         const int b = sqrt_N1 + rank*ds + 1;
+        printf("%d - [%d, %d]\n", rank, a+1, b-1);
         int* aux_primes;
         int aux_primes_size;
         int primes_size;
@@ -315,6 +312,9 @@ void parallel_sieve(int N)
         const double time = (double)(end-begin)/CLOCKS_PER_SEC;
         fprintf(data_file, "%d,%d,%f\n", rank, N, time);
 
+        // print to stdout total number of primes
+        printf("%d - %d\n", rank, primes_size);
+
         for(int i=0; i<primes_size; ++i)
             fprintf(res_file, "%d ", primes[i]);
         free(primes);
@@ -324,6 +324,7 @@ void parallel_sieve(int N)
         // rank 0 (master)
         const int a = sqrt_N1 + (n_proc-1)*ds;
         const int b = N;
+        printf("%d - [%d, %d]\n", rank, a+1, b-1);
         int* aux_primes;
         int aux_primes_size;
         int primes_size;
@@ -333,6 +334,9 @@ void parallel_sieve(int N)
         const clock_t end = clock();
         const double time = (double)(end-begin)/CLOCKS_PER_SEC;
         fprintf(data_file, "%d,%d,%f\n", rank, N, time);
+
+        // print to stdout total number of primes
+        printf("%d - %d\n", rank, aux_primes_size+primes_size);
 
         for(int i=0; i<aux_primes_size; ++i)
             fprintf(res_file, "%d ", aux_primes[i]);
