@@ -23,14 +23,19 @@ int main(int argc, char** argv)
         fprintf(stderr, "Provide positive sizes\n");
         exit(1);
     }
+    if (n != m)
+    {
+        fprintf(stderr, "N must be equal to M\n");
+        exit(EXIT_FAILURE);
+    }
 
-    double* const M = safe_malloc(m*n*sizeof(double));
-    get_random_array(M, m*n);
-    write_array_to_file(M, m, n, argv[3]);
+    double* const M = safe_malloc(n*n*sizeof(double));
+    get_random_array(M, n*n);
+    write_array_to_file(M, n, n, argv[3]);
 
-    double* const V = safe_malloc(n*1*sizeof(double));
-    get_random_array(V, n);
-    write_array_to_file(V, n, 1, argv[4]);
+    double* const V = safe_malloc(n*n*sizeof(double));
+    get_random_array(V, n*n);
+    write_array_to_file(V, n, n, argv[4]);
 
     return 0;
 }
