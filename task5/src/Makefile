@@ -2,12 +2,12 @@ PARCC = mpicc
 CC = gcc
 PARRUN = mpirun
 CFLAGS = -Ofast -DNDEBUG
-M = 1024
-N = 1024
+M = 2000
+N = $(M)
 F1 = ../out/A.bin
 F2 = ../out/B.bin
 F3 = ../out/C.bin
-NPROC = 27
+NPROC = 8
 build: gen calc
 run: generate calculate test
 generate: gen

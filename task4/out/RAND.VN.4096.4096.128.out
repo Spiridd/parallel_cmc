@@ -1,0 +1,4 @@
+n_proc: 512
+matrix: 4096x4096
+row blocked
+MPI time:   0.340000

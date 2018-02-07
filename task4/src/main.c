@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <mpi.h>
-#include "fun.h"
+#include "matrix.h"
 
 int main(int argc, char** argv)
 {

@@ -1,0 +1,48 @@
+NNODES = 128
+PARCC = mpixlc
+CC = $(PARCC)
+# use only one FPU
+CFLAGS = -qarch=450 -qtune=450 -O0
+# matrix size
+M = 1024
+N = 4096
+# time constraint
+TIME = -w 00:10:00
+# bluegene mapping instructions
+MAP = RAND
+MAPFILE = ../res/my.map
+MAPPING = -e BG_MAPPING=$(MAPFILE)
+MODE = VN
+OMP_NUM_THREADS = 1
+# I/O
+F1 = ../res/A.bin
+F2 = ../res/b.bin
+F3 = ../res/c.bin
+STDOUT = --stdout ../out/$(MAP).$(MODE).$(M).$(N).$(NNODES).out
+build: gen calc
+run: generate calculate
+generate: gen
+# simple one-thread program, running on frontend
+	@./gen $(M) $(N) $(F1) $(F2)
+gen: gen.o fun.o
+	@$(CC) gen.o fun.o -o gen $(CFLAGS)
+gen.o: gen.c
+	@$(CC) -c -o gen.o gen.c $(CFLAGS)
+fun.o: fun.c
+	@$(CC) -c -o fun.o fun.c $(CFLAGS)
+calculate: calc
+	mpisubmit.bg $(TIME) -n $(NNODES) -m $(MODE) $(MAPPING) -e "OMP_NUM_THREADS=$(OMP_NUM_THREADS)" $(STDOUT) calc $(F1) $(F2) $(F3)
+calc: main.o matrix.o fun.o
+	@$(PARCC) main.o matrix.o fun.o -o calc $(CFLAGS)
+main.o: main.c
+	@$(PARCC) -c -o main.o main.c $(CFLAGS)
+matrix.o: matrix.c
+	@$(PARCC) -c -o matrix.o matrix.c $(CFLAGS)
+map: rand_map
+	@./rand_map $(MODE) $(MAPFILE)
+rand_map: rand_map.o
+	@$(CC) rand_map.o -o rand_map $(CFLAGS)
+rand_map.o: rand_map.c
+	@$(CC) -c -o rand_map.o rand_map.c $(CFLAGS)
+clean:
+	-@rm *.o gen calc rand_map $(F1) $(F2) $(F3) $(MAPFILE)

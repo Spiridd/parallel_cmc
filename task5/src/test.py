@@ -24,6 +24,7 @@ def get_np_matrix(filename):
     aux_values = np.fromfile(f, count=3, dtype=np.dtype('i'))
     data_t = 'f' if aux_values[0] == 0 else 'd'
     dim = aux_values[1:]
+    print("dim = {}x{}".format(dim[0], dim[1]))
     ret = np.fromfile(f, dtype=np.dtype(data_t)).reshape(dim)
     f.close()
     return ret
